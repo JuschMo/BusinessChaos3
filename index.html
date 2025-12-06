@@ -31,29 +31,34 @@
             }
         }
 
+        /* FIX: Set HTML and Body to ensure full height and scrollability */
+        html {
+            height: 100%;
+        }
+
         body {
             font-family: var(--font-body);
             color: var(--color-text-dark);
             margin: 0;
-            padding: 0;
+            padding: 50px 0;
             line-height: 1.6;
             
-            /* New: Deep Winter Blue Background */
+            /* Background and Snow */
             background-color: #1c3c6e; 
             background-image: none; 
             
             min-height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 50px;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
             
             position: relative; 
-            overflow: hidden; 
+            overflow-y: auto; /* Allow vertical scroll on the main document */
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
         
-        /* SNOWFALL LAYERS */
-        /* Layer 1: Smaller, faster, denser flakes */
+        /* SNOWFALL LAYERS (position: fixed ensures they stay in the background) */
         body::before, body::after {
             content: "";
             position: fixed;
@@ -61,25 +66,21 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1; /* Flakes are behind the main card and content */
+            z-index: -1; 
             pointer-events: none;
         }
         
         body::before {
-            /* Increased density (60px) and slightly larger flake size (3px) for visibility */
             background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.9) 3px, transparent 0);
             background-size: 60px 60px; 
             opacity: 0.9;
             animation: falling_snow 18s linear infinite; 
         }
         
-        /* Layer 2: Larger, slower, medium density flakes */
         body::after {
-            /* Increased density (90px) and larger flake size (4px) for prominent, slow movement */
             background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.7) 4px, transparent 0);
             background-size: 90px 90px; 
             opacity: 0.7;
-            /* FIX APPLIED: Removed 'reverse' so the snow falls downwards */
             animation: falling_snow 28s linear infinite; 
         }
         /* END SNOWFALL LAYERS */
@@ -91,11 +92,11 @@
             width: 90%;
             border-radius: 20px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-            overflow: hidden;
+            /* FIX: Removed 'overflow: hidden' which was preventing content from scrolling */
             border: 6px solid var(--color-deep-red);
             margin-bottom: 50px;
-            background-color: var(--color-light-snow); /* Main card is light */
-            z-index: 5; /* Ensure the card is well above the flakes (z-index: -1) */
+            background-color: var(--color-light-snow);
+            z-index: 5;
         }
 
         /* Top Red Banner */
@@ -131,6 +132,8 @@
             border-radius: 0 0 15px 15px;
             z-index: 5;
             min-height: 400px;
+            /* Ensure container content can push the wrapper height */
+            box-sizing: border-box; 
         }
 
         /* Title and Intro Styling */
@@ -139,7 +142,6 @@
             display: block;
             text-align: center;
             margin-bottom: 20px;
-            /* Using inline SVG for the Christmas tree icon for better visual fidelity */
         }
         
         .main-title {
@@ -244,7 +246,7 @@
             border-radius: 5px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        
+
         .option-list strong {
             color: var(--color-dark-green);
             display: block;
@@ -298,7 +300,6 @@
     <div class="card-wrapper">
         <div class="header-banner">
             <p style="margin: 0; font-size: 0.9em;">Choose Your Own Adventure</p>
-            <!-- Date updated to DECEMBER 2024 to match the screenshot -->
             <div class="date-box">DECEMBER 2024</div>
         </div>
         
@@ -308,7 +309,7 @@
             <!-- START: INTRO & CHOICE 1 (Default visible section) -->
             <!-- ==================================================================== -->
             <div class="story-section" id="intro">
-                <!-- Christmas Tree SVG from the image -->
+                <!-- Christmas Tree SVG -->
                 <div class="tree-icon">
                     <svg height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; margin: 0 auto;">
                         <title>Christmas Tree</title>
@@ -335,7 +336,7 @@
                 <!-- CHOICE 1 BUTTONS (Visual matching the image) -->
                 <div class="choice-block">
                     <a href="#" class="choice-link" data-next="path_a_1">
-                        Start Hot Chocolate Pop-up
+                        Start Hot Chocolate Pop-Up
                         <span>Path A</span>
                     </a>
                     <a href="#" class="choice-link" data-next="path_b_1">
@@ -352,7 +353,7 @@
 
             
             <!-- ==================================================================== -->
-            <!-- START: PATH A (HOT CHOCOLATE) - Content remains the same -->
+            <!-- START: PATH A (HOT CHOCOLATE) -->
             <!-- ==================================================================== -->
             <div class="story-section" id="path_a_1">
                  <h1 class="main-title" style="font-size: 2em;">⭐ PATH A – HOT CHOCOLATE POP-UP</h1>
@@ -434,7 +435,7 @@
 
 
             <!-- ==================================================================== -->
-            <!-- START: PATH B (GIFT HAMPER) - Content remains the same -->
+            <!-- START: PATH B (GIFT HAMPER) -->
             <!-- ==================================================================== -->
             <div class="story-section" id="path_b_1">
                 <h1 class="main-title" style="font-size: 2em;">🎁 PATH B – THE CHRISTMAS GIFT HAMPER BUSINESS</h1>
@@ -559,7 +560,7 @@
 
 
             <!-- ==================================================================== -->
-            <!-- START: PATH C (DOG WALKING) - Content remains the same -->
+            <!-- START: PATH C (DOG WALKING) -->
             <!-- ==================================================================== -->
             <div class="story-section" id="path_c_1">
                 <h1 class="main-title" style="font-size: 2em;">🐕‍🦺 PATH C – THE FESTIVE DOG-WALKING SERVICE</h1>
@@ -637,7 +638,7 @@
 
 
             <!-- ==================================================================== -->
-            <!-- START: ALL ENDINGS - Content remains the same -->
+            <!-- START: ALL ENDINGS -->
             <!-- ==================================================================== -->
 
             <!-- ENDING A1a(i)-1: THE LOSS LEADER LEGEND -->
@@ -818,46 +819,41 @@
     
     <!-- JavaScript Logic -->
     <script>
-        // Function to control which section is displayed
-        function showStoryPart(partId) {
-            // Get all story sections
-            const sections = document.querySelectorAll('.story-section');
+// Function to control which section is displayed
+function showStoryPart(partId) {
+    // Get all story sections
+    const sections = document.querySelectorAll('.story-section');
+    
+    // Hide all sections
+    sections.forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // Show the specific section requested by ID
+    const targetSection = document.getElementById(partId);
+    if (targetSection) {
+        targetSection.style.display = 'block';
+        
+        // When a new part is shown, scroll the *window* to the top of the container
+        // to ensure the user sees the content immediately, especially after clicking a button far down the screen.
+        document.querySelector('.card-wrapper').scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// Attach event listeners to all choice links
+document.addEventListener('DOMContentLoaded', () => {
+    // Start by showing the INTRO section
+    showStoryPart('intro');
+
+    // Select all links with the class 'choice-link'
+    const choiceLinks = document.querySelectorAll('.choice-link');
+
+    choiceLinks.forEach(link => {
+        link.addEventListener('click', function(event) {
+            // Prevent the default link behaviour (which would try to navigate to a new page)
+            event.preventDefault();
             
-            // Hide all sections
-            sections.forEach(section => {
-                section.style.display = 'none';
-            });
+            // Get the ID of the next story part from the 'data-next' attribute
+            const nextPartId = this.getAttribute('data-next');
             
-            // Show the specific section requested by ID
-            const targetSection = document.getElementById(partId);
-            if (targetSection) {
-                targetSection.style.display = 'block';
-                // Scroll to the top of the container for better user experience
-                document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        // Attach event listeners to all choice links
-        document.addEventListener('DOMContentLoaded', () => {
-            // Start by showing the INTRO section
-            showStoryPart('intro');
-
-            // Select all links with the class 'choice-link'
-            const choiceLinks = document.querySelectorAll('.choice-link');
-
-            choiceLinks.forEach(link => {
-                link.addEventListener('click', function(event) {
-                    // Prevent the default link behaviour (which would try to navigate to a new page)
-                    event.preventDefault();
-                    
-                    // Get the ID of the next story part from the 'data-next' attribute
-                    const nextPartId = this.getAttribute('data-next');
-                    
-                    // Call the function to show the next part
-                    showStoryPart(nextPartId);
-                });
-            });
-        });
-    </script>
-</body>
-</html>
+            // Call the function to
