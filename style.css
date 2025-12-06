@@ -1,139 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Lato:wght@400;700&display=swap');
+/* BEFORE */
+/* ...
+display: flex;
+justify-content: center;
+align-items: flex-start;
+padding-top: 50px;
+position: relative; 
+overflow: hidden; 
+*/
 
-/* Color Variables based on the image */
-:root {
-    --color-deep-red: #990000;
-    --color-dark-green: #156225;
-    --color-gold: #D4AF37;
-    --color-light-snow: #F8F8F8;
-    --color-text-dark: #333;
-    --font-title: 'Merriweather', serif;
-    --font-body: 'Lato', sans-serif;
-}
+/* AFTER (Allows Scrolling) */
+display: flex;
+flex-direction: column;
+justify-content: flex-start;
+align-items: center;
+padding: 50px 0; 
+position: relative; 
+overflow-y: auto; 
+overflow-x: hidden;
 
-/* Keyframes for the falling snow effect */
-@keyframes falling_snow {
-    0% { 
-        background-position: 0 0; 
-    }
-    100% { 
-        /* Ensures vertical-only fall */
-        background-position: 0 1000px;
-    }
-}
-
-body {
-    font-family: var(--font-body);
-    color: var(--color-text-dark);
-    margin: 0;
-    padding: 0;
-    line-height: 1.6;
-    
-    /* New: Deep Winter Blue Background */
-    background-color: #1c3c6e; 
-    background-image: none; 
-    
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 50px;
-    
-    position: relative; 
-    overflow: hidden; 
-}
-
-/* SNOWFALL LAYERS */
-/* Layer 1: Smaller, faster, denser flakes */
-body::before, body::after {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1; /* Flakes are behind the main card and content */
-    pointer-events: none;
-}
-
-body::before {
-    /* Increased density (60px) and slightly larger flake size (3px) for visibility */
-    background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.9) 3px, transparent 0);
-    background-size: 60px 60px; 
-    opacity: 0.9;
-    animation: falling_snow 18s linear infinite; 
-}
-
-/* Layer 2: Larger, slower, medium density flakes */
-body::after {
-    /* Increased density (90px) and larger flake size (4px) for prominent, slow movement */
-    background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.7) 4px, transparent 0);
-    background-size: 90px 90px; 
-    opacity: 0.7;
-    /* FIX APPLIED: Removed 'reverse' so the snow falls downwards */
-    animation: falling_snow 28s linear infinite; 
-}
-/* END SNOWFALL LAYERS */
-
-
-/* Main Content Card */
-.card-wrapper {
-    max-width: 800px;
-    width: 90%;
-    border-radius: 20px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-    overflow: hidden;
-    border: 6px solid var(--color-deep-red);
-    margin-bottom: 50px;
-    background-color: var(--color-light-snow); /* Main card is light */
-    z-index: 5; /* Ensure the card is well above the flakes (z-index: -1) */
-}
-
-/* Top Red Banner */
-.header-banner {
-    background-color: var(--color-deep-red);
-    color: white;
-    padding: 10px 0 30px 0;
-    text-align: center;
-    position: relative;
-    z-index: 10;
-}
-
-/* DECEMBER 2024 Date Box */
-.date-box {
-    display: inline-block;
-    padding: 8px 30px;
-    margin-top: 15px;
-    background-color: var(--color-deep-red);
-    border: 2px solid var(--color-gold);
-    border-radius: 50px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-}
-
-/* Container for white content area */
-.container {
-    padding: 40px;
-    background-color: white;
-    position: relative;
-    margin-top: -25px; /* Overlap with the red banner */
-    border-radius: 0 0 15px 15px;
-    z-index: 5;
-    min-height: 400px;
-}
-
-/* Title and Intro Styling */
-.tree-icon {
-    font-size: 4rem;
-    display: block;
-    text-align: center;
-    margin-bottom: 20px;
-    /* Using inline SVG for the Christmas tree icon for better visual fidelity */
-}
-
-.main-title {
-    font-family: var(--font-title);
-    color: var(--color-deep-red);
-    font-size:
+This ensures the content can push past the height of the viewport and trigger the necessary scroll bar. You should now be able to see the entire page content!
