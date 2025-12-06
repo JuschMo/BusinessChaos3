@@ -3,279 +3,861 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Christmas Business Chaos - Single Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>The Christmas Business Chaos - Interactive Story</title>
+    
+    <!-- Custom CSS for Festive Theme -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Lato:wght@400;700&display=swap');
+
+        /* Color Variables based on the image */
+        :root {
+            --color-deep-red: #990000;
+            --color-dark-green: #156225;
+            --color-gold: #D4AF37;
+            --color-light-snow: #F8F8F8;
+            --color-text-dark: #333;
+            --font-title: 'Merriweather', serif;
+            --font-body: 'Lato', sans-serif;
+        }
+
+        /* Keyframes for the falling snow effect */
+        @keyframes falling_snow {
+            0% { 
+                background-position: 0 0; 
+            }
+            100% { 
+                /* Ensures vertical-only fall */
+                background-position: 0 1000px;
+            }
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--color-text-dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            
+            /* New: Deep Winter Blue Background */
+            background-color: #1c3c6e; 
+            background-image: none; 
+            
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 50px;
+            
+            position: relative; 
+            overflow: hidden; 
+        }
+        
+        /* SNOWFALL LAYERS */
+        /* Layer 1: Smaller, faster, denser flakes */
+        body::before, body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Flakes are behind the main card and content */
+            pointer-events: none;
+        }
+        
+        body::before {
+            /* Increased density (60px) and slightly larger flake size (3px) for visibility */
+            background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.9) 3px, transparent 0);
+            background-size: 60px 60px; 
+            opacity: 0.9;
+            animation: falling_snow 18s linear infinite; 
+        }
+        
+        /* Layer 2: Larger, slower, medium density flakes */
+        body::after {
+            /* Increased density (90px) and larger flake size (4px) for prominent, slow movement */
+            background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.7) 4px, transparent 0);
+            background-size: 90px 90px; 
+            opacity: 0.7;
+            /* FIX APPLIED: Removed 'reverse' so the snow falls downwards */
+            animation: falling_snow 28s linear infinite; 
+        }
+        /* END SNOWFALL LAYERS */
+
+
+        /* Main Content Card */
+        .card-wrapper {
+            max-width: 800px;
+            width: 90%;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            border: 6px solid var(--color-deep-red);
+            margin-bottom: 50px;
+            background-color: var(--color-light-snow); /* Main card is light */
+            z-index: 5; /* Ensure the card is well above the flakes (z-index: -1) */
+        }
+
+        /* Top Red Banner */
+        .header-banner {
+            background-color: var(--color-deep-red);
+            color: white;
+            padding: 10px 0 30px 0;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* DECEMBER 2024 Date Box */
+        .date-box {
+            display: inline-block;
+            padding: 8px 30px;
+            margin-top: 15px;
+            background-color: var(--color-deep-red);
+            border: 2px solid var(--color-gold);
+            border-radius: 50px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Container for white content area */
+        .container {
+            padding: 40px;
+            background-color: white;
+            position: relative;
+            margin-top: -25px; /* Overlap with the red banner */
+            border-radius: 0 0 15px 15px;
+            z-index: 5;
+            min-height: 400px;
+        }
+
+        /* Title and Intro Styling */
+        .tree-icon {
+            font-size: 4rem;
+            display: block;
+            text-align: center;
+            margin-bottom: 20px;
+            /* Using inline SVG for the Christmas tree icon for better visual fidelity */
+        }
+        
+        .main-title {
+            font-family: var(--font-title);
+            color: var(--color-deep-red);
+            font-size: 2.5rem;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .story-text {
+            max-width: 650px;
+            margin: 0 auto 30px auto;
+            text-align: center;
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        /* Choice Buttons (Green & Pill-Shaped) */
+        .choice-block {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px; /* Spacing between the buttons */
+        }
+
+        .choice-link {
+            flex: 1 1 45%; /* Allows two buttons per row on wider screens */
+            max-width: 300px;
+            display: block;
+            padding: 20px 15px;
+            background-color: var(--color-dark-green);
+            color: white;
+            text-decoration: none;
+            border-radius: 15px; /* Slightly rounded rectangle */
+            transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: 0 6px 0 var(--color-deep-red);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .choice-link span:nth-child(2) {
+            display: block;
+            font-size: 0.8em;
+            font-weight: 400;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .choice-link:hover {
+            background-color: #3b8d4c; /* Lighter green on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 var(--color-deep-red);
+        }
+
+        .choice-link:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 var(--color-deep-red);
+        }
+        
+        /* General Story Part and Choice List Styling */
+        .story-section {
+            display: none; /* Controlled by JavaScript */
+        }
+
+        .story-part {
+            padding: 20px 0;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+            font-size: 1.05em;
+        }
+
+        .story-part h2, .choice-block h2 {
+            font-family: var(--font-title);
+            color: var(--color-deep-red);
+            font-size: 1.8em;
+            border-left: 5px solid var(--color-dark-green);
+            padding-left: 10px;
+            margin-top: 0;
+        }
+
+        .option-list {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .option-list li {
+            background-color: var(--color-light-snow);
+            border-left: 4px solid var(--color-gold);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .option-list strong {
+            color: var(--color-dark-green);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Ending Styling */
+        .ending-box {
+            background-color: #F0FFF0; /* Very light green */
+            border: 3px solid var(--color-dark-green);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .concept-list {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--color-deep-red);
+            font-size: 0.9em;
+            font-style: italic;
+            color: #777;
+            text-align: left;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 600px) {
+            body {
+                padding-top: 20px;
+            }
+            .card-wrapper {
+                width: 95%;
+            }
+            .container {
+                padding: 20px;
+            }
+            .main-title {
+                font-size: 1.8rem;
+            }
+            .choice-link {
+                flex: 1 1 100%; /* Stack buttons on small screens */
+                max-width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>⭐ CHOOSE YOUR OWN ADVENTURE: “THE CHRISTMAS BUSINESS CHAOS”</h1>
-        <p style="text-align: center; color: #555;">
-            A GCSE Business Story with Festive Mayhem
-        </p>
-
-        <div class="story-section" id="intro">
-            <div class="story-part">
-                <h2>🎄 INTRO</h2>
-                <p>It is early December, and you realise you need extra money for Christmas — presents, snacks, and possibly a new hoodie because the school heating has definitely broken again. So you decide to start a business for the Christmas period.</p>
-                <p>But your decisions will determine whether you end up as a Christmas Business Legend… or bankrupt and forced to work as an Elf in a garden centre. **Choose wisely.**</p>
-            </div>
-            <div class="choice-block">
-                <h2>⭐ CHOICE 1 – WHAT BUSINESS DO YOU OPEN?</h2>
-                <ul class="option-list">
-                    <li><strong>A: A Hot Chocolate Pop-up Stall</strong> USP: extra toppings, flavoured syrups, marshmallow mountains. Stakeholders: customers (cold), school staff (grumpy), supplier (local café)</li>
-                    <li><strong>B: A Christmas Gift Hamper Business</strong> USP: personalised gift bundles. Stakeholders: parents, students, suppliers, the PTA (who will definitely want a discount)</li>
-                    <li><strong>C: A Festive Dog-Walking Service</strong> USP: dogs get a free Santa hat. Stakeholders: pet owners, neighbours, possibly the RSPCA</li>
-                </ul>
-                <a href="#" class="choice-link" data-next="path_a_1">Choose A: Hot Chocolate Pop-up</a>
-                <a href="#" class="choice-link" data-next="path_b_1">Choose B: Gift Hamper Business</a>
-                <a href="#" class="choice-link" data-next="path_c_1">Choose C: Dog-Walking Service</a>
-            </div>
-        </div>
-        <div class="story-section" id="path_a_1" style="display:none;">
-             <h1>⭐ PATH A – HOT CHOCOLATE POP-UP</h1>
-            <p style="text-align: center; color: #555;">GCSE Business meets Christmas chaos.</p>
-
-            <div class="story-part">
-                <h2>🎄 A1 – Opening Day at Your Hot Chocolate Stall</h2>
-                <p>You set up your stall outside school during the Christmas fair.</p>
-                <p>There is snow ☃️, music 🎶, and a suspicious smell of burnt mince pies. Your stall looks amazing because:</p>
-                <ul>
-                    <li>✔ your USP is “The Ultimate Hot Chocolate Experience”</li>
-                    <li>✔ you offer flavoured syrups, whipped cream towers, and optional sprinkles shaped like accountants</li>
-                    <li>✔ you’ve positioned yourself at a high footfall location</li>
-                </ul>
-                <p>Demand instantly spikes. You have created… a queue. A long queue. But now you face your first real business decision.</p>
-            </div>
-
-            <div class="choice-block">
-                <h2>⭐ A1 – Supplier Choice</h2>
-                <p>Your first batch nearly sells out. You urgently need more stock.</p>
-                <ul class="option-list">
-                    <li>
-                        <strong>❄️ CHOICE A1a – Buy from the Cheap Wholesaler</strong>
-                        <ul>
-                            <li>Very low variable costs</li>
-                            <li>Higher profit margin</li>
-                            <li>Possible quality issues 👀</li>
-                            <li>Delivery speed: fast (very fast — suspiciously fast)</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <strong>🎁 CHOICE A1b – Buy from a Premium Local Café Supplier</strong>
-                        <ul>
-                            <li>Higher variable cost</li>
-                            <li>Excellent quality → stronger brand image</li>
-                            <li>Helps differentiate your product in a competitive market</li>
-                            <li>Delivery speed: slow (they make everything by hand while telling you about their feelings)</li>
-                        </ul>
-                    </li>
-                </ul>
-                <a href="#" class="choice-link" data-next="path_a_1a">Choose A1a: Cheap Wholesaler</a>
-                <a href="#" class="choice-link" data-next="path_a_1b">Choose A1b: Premium Local Café</a>
-            </div>
-        </div>
-        <div class="story-section" id="path_a_1a" style="display:none;">
-             <h1>⭐⭐ PATH A1a – THE CHEAP WHOLESALER</h1>
-
-            <div class="story-part">
-                <p>The wholesaler delivers a huge bag of marshmallows labelled: “Marshmallow-Type Product (Suitable For Some Uses)”. **Red flag. 🚩**</p>
-                <p>But you choose to ignore it. At first, customers don’t notice — your presentation is so good that people take more photos than sips.</p>
-                <p>But then… A Year 8 yells: **“WHY DOES MY MARSHMALLOW TASTE LIKE… COAT?”**</p>
-                <p>Word spreads on Snapchat at the speed of light. Your products suffer a quality failure, leading to:</p>
-                <ul>
-                    <li>❌ Drop in customer satisfaction</li>
-                    <li>❌ Negative word-of-mouth promotion</li>
-                    <li>❌ A 30% fall in demand</li>
-                    <li>❌ Threat of brand damage</li>
-                </ul>
-                <p>You must respond quickly.</p>
-            </div>
-
-            <div class="choice-block">
-                <h2>⭐ A1a(i) – Crisis Response</h2>
-                <ul class="option-list">
-                    <li>
-                        <strong>🍫 CHOICE A1a(i)-1 – Launch a Promotional Discount</strong>
-                        <p>You drop prices by 20% (a sales promotion strategy) hoping to regain market share and encourage repeat purchases.</p>
-                    </li>
-                    <li>
-                        <strong>🌱 CHOICE A1a(i)-2 – Rebrand as “Eco-Friendly Vegan Marshmallows”</strong>
-                        <p>You plan to reposition your brand to target the ethical consumer segment.</p>
-                    </li>
-                </ul>
-
-                <a href="#" class="choice-link" data-next="ending_a_1a_i_1">Choose A1a(i)-1: Discount</a>
-                <a href="#" class="choice-link" data-next="ending_a_1a_i_2">Choose A1a(i)-2: Rebrand</a>
-            </div>
-        </div>
-        <div class="story-section" id="path_a_1b" style="display:none;">
-            <h1>⭐⭐ PATH A1b – PREMIUM SUPPLIER</h1>
-            <div class="story-part">
-                <p>The premium marshmallows arrive in beautiful compostable packaging. Your stall now radiates artisan Christmas street-market energy.</p>
-                <p>Customers rave about your taste, your presentation, your vibe, your festive playlist (mostly Michael Bublé). Your reputation skyrockets.</p>
-                <p>BUT… Your costs are rising too. Your cash flow forecast shows that if you continue like this, you’ll break even on 23 December at 14:07, which is useless because school closes on the 20th. So it’s time for a pricing strategy.</p>
-            </div>
-            <div class="choice-block">
-                <h2>⭐ A1b(i) – PRICING</h2>
-                <ul class="option-list">
-                    <li>
-                        <strong>💷 CHOICE A1b(i)-1 – Price Skimming</strong>
-                        <p>You raise your price because your product is high quality and demand is inelastic (people are COLD).</p>
-                    </li>
-                    <li>
-                        <strong>🎁 CHOICE A1b(i)-2 – Bundle Deals</strong>
-                        <p>“Buy 2, get a candy cane FREE!” (A classic value-added promotion to encourage sales volume.)</p>
-                    </li>
-                </ul>
-                <a href="#" class="choice-link" data-next="ending_a_1b_i_1">Choose A1b(i)-1: Price Skimming</a>
-                <a href="#" class="choice-link" data-next="ending_a_1b_i_2">Choose A1b(i)-2: Bundle Deals</a>
-            </div>
-        </div>
-        <div class="story-section" id="path_b_1" style="display:none;">
-            <h1>🎁 PATH B – THE CHRISTMAS GIFT HAMPER BUSINESS</h1>
-            <p style="text-align: center; color: #555;">A beautiful blend of enterprise skills, market segmentation… and absolute chaos.</p>
-            <div class="story-part">
-                <h2>⭐ B1 – Launching Your Hampers</h2>
-                <p>You decide to start a Christmas Gift Hamper business, because nothing says “entrepreneurial spirit” like buying cheap chocolate in bulk and repackaging it expensively.</p>
-                <p>Your hampers include: hot chocolate sachets, candles that smell like “Winter Cinnamon Corporate Strategy,” questionable tinsel, and a handwritten note saying “Merry Businessmas 🎄📈”.</p>
-                <p>You have a huge potential market — but who should you target first?</p>
-            </div>
-            <div class="choice-block">
-                <h2>⭐⭐ CHOICE B1 – Target Market</h2>
-                <ul class="option-list">
-                    <li>
-                        <strong>CHOICE B1a – Target Students</strong>
-                        <ul>
-                            <li>✔ Big customer base</li>
-                            <li>✔ Love sweets</li>
-                            <li>✔ Constantly forget they have to pay you</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <strong>CHOICE B1b – Target Teachers</strong>
-                        <ul>
-                            <li>✔ Higher income</li>
-                            <li>✔ Emotional need for festive stress relief</li>
-                            <li>✔ Scarily high expectations</li>
-                        </ul>
-                    </li>
-                </ul>
-                <a href="#" class="choice-link" data-next="path_b_1a">Choose B1a: Target Students</a>
-                <a href="#" class="choice-link" data-next="path_b_1b">Choose B1b: Target Teachers</a>
-            </div>
-        </div>
-        <div class="story-section" id="path_c_1" style="display:none;">
-            <h1>🐕‍🦺 PATH C – THE FESTIVE DOG-WALKING SERVICE</h1>
-            <p style="text-align: center; color: #555;">An entrepreneurial journey filled with ethics, customer service… and dogs in Santa hats.</p>
-            <div class="story-part">
-                <h2>⭐ C1 – Launch Day</h2>
-                <p>You start your festive dog-walking business. Every dog receives: a tiny Santa hat, a mini Christmas bandana, and a personalised treat bag labelled “BARKeting Department”.</p>
-                <p>Demand grows quickly — because people want to enjoy Christmas shopping without their pets eating wrapping paper.</p>
-                <p>But one dog, a tiny but chaotic pug named Sir Wigglebottom McSniffington III, **escapes during a walk.** This is a major operational failure.</p>
-            </div>
-            <div class="choice-block">
-                <h2>⭐⭐ CHOICE C1 – Crisis Response</h2>
-                <ul class="option-list">
-                    <li>
-                        <strong>CHOICE C1a – Launch a Search Operation</strong>
-                        <ul>
-                            <li>✔ Stakeholder satisfaction</li>
-                            <li>✔ Ethical behaviour</li>
-                            <li>✔ Higher costs (transport, time)</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <strong>CHOICE C1b – Pretend Nothing Happened</strong>
-                        <ul>
-                            <li>✔ Saves time</li>
-                            <li>✔ Zero cost</li>
-                            <li>✖ INSANELY high risk</li>
-                            <li>✖ Terrible customer service</li>
-                        </ul>
-                    </li>
-                </ul>
-                <a href="#" class="choice-link" data-next="path_c_1a">Choose C1a: Search Operation</a>
-                <a href="#" class="choice-link" data-next="path_c_1b">Choose C1b: Ignore It</a>
-            </div>
-        </div>
-        <div class="story-section" id="ending_a_1a_i_1" style="display:none;">
-            <h1>⭐⭐⭐ ENDING A1a(i)-1 – THE LOSS LEADER LEGEND</h1>
-            <div class="ending-box">
-                <p>Your discount works — demand increases again. Although your profit margin shrinks dramatically, your revenue increases.</p>
-                <p>You become locally famous: Someone even comments, **“This is better value than Starbucks.”**</p>
-                <p>You don’t make much profit… But you do learn the meaning of loss leaders and customer loyalty.</p>
-                <div class="concept-list">
-                    **GCSE Concepts Used:** penetration pricing, loss leaders, demand elasticity, customer loyalty, revenue vs profit.
-                </div>
-            </div>
-            <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
-        </div>
-
-        <div class="story-section" id="ending_a_1a_i_2" style="display:none;">
-            <h1>⭐⭐⭐ ENDING A1a(i)-2 – THE SUSTAINABILITY SCANDAL</h1>
-            <div class="ending-box">
-                <p>A Year 10 asks: **“Are the marshmallows actually vegan?”** You panic and reply: **“They are… spiritually vegan.”**</p>
-                <p>This triggers: A complaint from a parent, An email from the PTA, A safeguarding concern (???), Someone makes a TikTok calling you **“Marshmallow Walter White”**.</p>
-                <p>Your business collapses due to: ethical failure, stakeholder pressure, and a breakdown in brand trust.</p>
-                <div class="concept-list">
-                    **GCSE Concepts Used:** ethics, CSR, stakeholder conflict, reputation, legal implications, branding.
-                </div>
-            </div>
-            <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
+    <div class="card-wrapper">
+        <div class="header-banner">
+            <p style="margin: 0; font-size: 0.9em;">Choose Your Own Adventure</p>
+            <!-- Date updated to DECEMBER 2024 to match the screenshot -->
+            <div class="date-box">DECEMBER 2024</div>
         </div>
         
-        <div class="story-section" id="ending_a_1b_i_1" style="display:none;">
-            <h1>⭐⭐⭐ ENDING A1b(i)-1 – THE PREMIUM POWER MOVE</h1>
-            <div class="ending-box">
-                <p>You raise your price by £1. Nobody complains. In fact, people think it tastes BETTER because it’s more expensive.</p>
-                <p>You achieve: ✔ Higher gross profit, ✔ Stronger premium brand positioning, ✔ Break-even earlier than expected, **✔ Total profit: £312**.</p>
-                <p>You feel like a young Alan Sugar.</p>
-                <div class="concept-list">
-                    **GCSE Concepts Used:** skimming, price elasticity of demand, break-even, profit margins.
+        <div class="container">
+
+            <!-- ==================================================================== -->
+            <!-- START: INTRO & CHOICE 1 (Default visible section) -->
+            <!-- ==================================================================== -->
+            <div class="story-section" id="intro">
+                <!-- Christmas Tree SVG from the image -->
+                <div class="tree-icon">
+                    <svg height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; margin: 0 auto;">
+                        <title>Christmas Tree</title>
+                        <!-- Star -->
+                        <path d="M50 5L55 20L70 20L60 30L65 45L50 35L35 45L40 30L30 20L45 20L50 5Z" fill="#F1C40F"/>
+                        <!-- Tree body (layers of green) -->
+                        <path d="M50 35L80 50L70 65L50 55L30 65L20 50L50 35Z" fill="#27AE60"/>
+                        <path d="M50 55L75 70L65 80L50 70L35 80L25 70L50 55Z" fill="#2ECC71"/>
+                        <path d="M50 70L65 85L50 90L35 85L50 70Z" fill="#27AE60"/>
+                        <!-- Trunk -->
+                        <rect x="45" y="90" width="10" height="10" fill="#964B00"/>
+                    </svg>
+                </div>
+                
+                <h1 class="main-title">The Christmas Business Chaos</h1>
+                
+                <p class="story-text">
+                    It is early December, and you realise you need extra money for Christmas — presents, snacks, and possibly a new hoodie because the school heating has definitely broken again. So you decide to start a business for the Christmas period.
+                </p>
+                <p class="story-text" style="font-weight: bold; color: var(--color-deep-red);">
+                    But your decisions will determine whether you end up as a Christmas Business Legend… or bankrupt and forced to work as an Elf in a garden centre. Choose wisely.
+                </p>
+
+                <!-- CHOICE 1 BUTTONS (Visual matching the image) -->
+                <div class="choice-block">
+                    <a href="#" class="choice-link" data-next="path_a_1">
+                        Start Hot Chocolate Pop-up
+                        <span>Path A</span>
+                    </a>
+                    <a href="#" class="choice-link" data-next="path_b_1">
+                        Start Gift Hamper Business
+                        <span>Path B</span>
+                    </a>
+                    <a href="#" class="choice-link" data-next="path_c_1" style="flex: 1 1 90%; max-width: 400px;">
+                        Start Festive Dog-Walking
+                        <span>Path C</span>
+                    </a>
                 </div>
             </div>
-            <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
-        </div>
-        
-        <div class="story-section" id="ending_a_1b_i_2" style="display:none;">
-            <h1>⭐⭐⭐ ENDING A1b(i)-2 – THE BUNDLE OVERLOAD</h1>
-            <div class="ending-box">
-                <p>Everyone buys the bundle… but only eats the FREE candy cane. Your variable costs rise. Your profit margin collapses.</p>
-                <p>You end the day with: 61 untouched hot chocolates, 0 candy canes, and sadness.</p>
-                <p>You reflect deeply on pricing strategy failure.</p>
-                <div class="concept-list">
-                    **GCSE Concepts Used:** sales promotions, margin impact, revenue vs profit, misforecasting.
+            <!-- END: INTRO & CHOICE 1 -->
+
+            
+            <!-- ==================================================================== -->
+            <!-- START: PATH A (HOT CHOCOLATE) - Content remains the same -->
+            <!-- ==================================================================== -->
+            <div class="story-section" id="path_a_1">
+                 <h1 class="main-title" style="font-size: 2em;">⭐ PATH A – HOT CHOCOLATE POP-UP</h1>
+                <p class="story-text">GCSE Business meets Christmas chaos.</p>
+
+                <div class="story-part">
+                    <h2>🎄 A1 – Opening Day at Your Hot Chocolate Stall</h2>
+                    <p>You set up your stall outside school during the Christmas fair.</p>
+                    <p>There is snow ☃️, music 🎶, and a suspicious smell of burnt mince pies. Your stall looks amazing because: your USP is “The Ultimate Hot Chocolate Experience”, you offer flavoured syrups, whipped cream towers, and optional sprinkles shaped like accountants, and you’ve positioned yourself at a high footfall location.</p>
+                    <p>Demand instantly spikes. You have created… a queue. A long queue. But now you face your first real business decision.</p>
+                </div>
+
+                <div class="choice-block">
+                    <h2>⭐ A1 – Supplier Choice</h2>
+                    <ul class="option-list">
+                        <li>
+                            <strong>❄️ CHOICE A1a – Buy from the Cheap Wholesaler</strong>
+                            <ul><li>Very low variable costs, Higher profit margin, Possible quality issues 👀, Delivery speed: fast (very fast — suspiciously fast)</li></ul>
+                        </li>
+                        <li>
+                            <strong>🎁 CHOICE A1b – Buy from a Premium Local Café Supplier</strong>
+                            <ul><li>Higher variable cost, Excellent quality → stronger brand image, Helps differentiate your product in a competitive market, Delivery speed: slow (they make everything by hand while telling you about their feelings)</li></ul>
+                        </li>
+                    </ul>
+                    <a href="#" class="choice-link" data-next="path_a_1a">A1a: Cheap Wholesaler</a>
+                    <a href="#" class="choice-link" data-next="path_a_1b">A1b: Premium Local Café</a>
                 </div>
             </div>
-            <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
-        </div>
 
-
-        <div class="story-section" id="path_b_1a" style="display:none;">
-            <h1>⭐⭐⭐ PATH B1a – Targeting Students</h1>
-            <div class="story-part">
-                <p>Students LOVE your hamper idea. Within minutes, you receive 37 requests. Within hours, you realise students have… unusual preferences.</p>
-                <p>Examples include: “Can you put ONLY crisps in mine?”, “Can there be a photo of my dog dressed as a reindeer?”, “I want a hamper but I can only pay you in Pokémon cards.”</p>
-                <p>Customer needs vary. Market segmentation becomes a NIGHTMARE.</p>
+            <!-- PATH A1a (The Crisis) -->
+            <div class="story-section" id="path_a_1a">
+                 <h1 class="main-title" style="font-size: 2em;">⭐⭐ PATH A1a – THE CHEAP WHOLESALER</h1>
+                <div class="story-part">
+                    <p>The wholesaler delivers a huge bag of marshmallows labelled: “Marshmallow-Type Product (Suitable For Some Uses)”. **Red flag. 🚩**</p>
+                    <p>A Year 8 yells: **“WHY DOES MY MARSHMALLOW TASTE LIKE… COAT?”**</p>
+                    <p>Your products suffer a quality failure, leading to: ❌ Drop in customer satisfaction, ❌ Negative word-of-mouth promotion, ❌ A 30% fall in demand, ❌ Threat of brand damage. You must respond quickly.</p>
+                </div>
+                <div class="choice-block">
+                    <h2>⭐ A1a(i) – Crisis Response</h2>
+                    <ul class="option-list">
+                        <li>
+                            <strong>🍫 CHOICE A1a(i)-1 – Launch a Promotional Discount</strong>
+                            <p>You drop prices by 20% (a sales promotion strategy) hoping to regain market share and encourage repeat purchases.</p>
+                        </li>
+                        <li>
+                            <strong>🌱 CHOICE A1a(i)-2 – Rebrand as “Eco-Friendly Vegan Marshmallows”</strong>
+                            <p>You plan to reposition your brand to target the ethical consumer segment.</p>
+                        </li>
+                    </ul>
+                    <a href="#" class="choice-link" data-next="ending_a_1a_i_1">Discount</a>
+                    <a href="#" class="choice-link" data-next="ending_a_1a_i_2">Rebrand</a>
+                </div>
             </div>
-            <div class="choice-block">
-                <h2>⭐ B1a(i) – Order Management System</h2>
-                <ul class="option-list">
-                    <li>
-                        <strong>📋 CHOICE B1a(i)-1 – Use a Google Form</strong>
-                        <p>✔ Structured, ✔ Easy data collection, ✔ Helps conduct market research, ✔ Reduces communication errors.</p>
-                    </li>
-                    <li>
-                        <strong>📱 CHOICE B1a(i)-2 – Use Instagram DMs</strong>
-                        <p>✔ Easy, ✔ Students already use Insta, ✖ Absolutely no record-keeping, ✖ A guaranteed administrative apocalypse.</p>
-                    </li>
-                </ul>
-                <a href="#" class="choice-link" data-next="path_b_1a_i_1">Choose B1a(i)-1: Google Form</a>
-                <a href="#" class="choice-link" data-next="path_b_1a_i_2">Choose B1a(i)-2: Instagram DMs</a>
+
+            <!-- PATH A1b (The Premium Supplier) -->
+            <div class="story-section" id="path_a_1b">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐ PATH A1b – PREMIUM SUPPLIER</h1>
+                <div class="story-part">
+                    <p>The premium marshmallows arrive in beautiful compostable packaging. Customers rave about your taste, your presentation, your vibe, your festive playlist (mostly Michael Bublé). Your reputation skyrockets.</p>
+                    <p>BUT… Your costs are rising too. Your cash flow forecast shows that if you continue like this, you’ll break even on 23 December at 14:07, which is useless because school closes on the 20th. So it’s time for a pricing strategy.</p>
+                </div>
+                <div class="choice-block">
+                    <h2>⭐ A1b(i) – PRICING</h2>
+                    <ul class="option-list">
+                        <li>
+                            <strong>💷 CHOICE A1b(i)-1 – Price Skimming</strong>
+                            <p>You raise your price because your product is high quality and demand is inelastic (people are COLD).</p>
+                        </li>
+                        <li>
+                            <strong>🎁 CHOICE A1b(i)-2 – Bundle Deals</strong>
+                            <p>“Buy 2, get a candy cane FREE!” (A classic value-added promotion to encourage sales volume.)</p>
+                        </li>
+                    </ul>
+                    <a href="#" class="choice-link" data-next="ending_a_1b_i_1">Price Skimming</a>
+                    <a href="#" class="choice-link" data-next="ending_a_1b_i_2">Bundle Deals</a>
+                </div>
             </div>
-        </div>
+            <!-- END: PATH A -->
+
+
+            <!-- ==================================================================== -->
+            <!-- START: PATH B (GIFT HAMPER) - Content remains the same -->
+            <!-- ==================================================================== -->
+            <div class="story-section" id="path_b_1">
+                <h1 class="main-title" style="font-size: 2em;">🎁 PATH B – THE CHRISTMAS GIFT HAMPER BUSINESS</h1>
+                <p class="story-text">A beautiful blend of enterprise skills, market segmentation… and absolute chaos.</p>
+                <div class="story-part">
+                    <h2>⭐ B1 – Launching Your Hampers</h2>
+                    <p>You decide to start a Christmas Gift Hamper business. Your hampers include: hot chocolate sachets, candles that smell like “Winter Cinnamon Corporate Strategy,” questionable tinsel, and a handwritten note saying “Merry Businessmas 🎄📈”.</p>
+                    <p>You have a huge potential market — but who should you target first?</p>
+                </div>
+                <div class="choice-block">
+                    <h2>⭐⭐ CHOICE B1 – Target Market</h2>
+                    <ul class="option-list">
+                        <li>
+                            <strong>CHOICE B1a – Target Students</strong>
+                            <ul><li>✔ Big customer base, ✔ Love sweets, ✔ Constantly forget they have to pay you</li></ul>
+                        </li>
+                        <li>
+                            <strong>CHOICE B1b – Target Teachers</strong>
+                            <ul><li>✔ Higher income, ✔ Emotional need for festive stress relief, ✔ Scarily high expectations</li></ul>
+                        </li>
+                    </ul>
+                    <a href="#" class="choice-link" data-next="path_b_1a">Target Students</a>
+                    <a href="#" class="choice-link" data-next="path_b_1b">Target Teachers</a>
+                </div>
+            </div>
+
+            <!-- PATH B1a (Target Students) -->
+            <div class="story-section" id="path_b_1a">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ PATH B1a – Targeting Students</h1>
+                <div class="story-part">
+                    <p>Students LOVE your hamper idea, but have unusual preferences (Pokémon cards, ONLY crisps). Customer needs vary. Market segmentation becomes a NIGHTMARE.</p>
+                </div>
+                <div class="choice-block">
+                    <h2>⭐ B1a(i) – Order Management System</h2>
+                    <ul class="option-list">
+                        <li>
+                            <strong>📋 CHOICE B1a(i)-1 – Use a Google Form</strong>
+                            <p>✔ Structured, ✔ Easy data collection, ✔ Helps conduct market research, ✔ Reduces communication errors.</p>
+                        </li>
+                        <li>
+                            <strong>📱 CHOICE B1a(i)-2 – Use Instagram DMs</strong>
+                            <p>✔ Easy, ✔ Students already use Insta, ✖ Absolutely no record-keeping, ✖ A guaranteed administrative apocalypse.</p>
+                        </li>
+                    </ul>
+                    <a href="#" class="choice-link" data-next="path_b_1a_i_1">Google Form</a>
+                    <a href="#" class="choice-link" data-next="path_b_1a_i_2">Instagram DMs</a>
+                </div>
+            </div>
+            
+            <!-- PATH B1a(i)-1 (Google Form Success) -->
+            <div class="story-section" id="path_b_1a_i_1">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ B1a(i)-1 – Google Form Success</h1>
+                <div class="story-part">
+                    <p>Your form helps you gather: customer budgets, product preferences, allergen information, and “gift message” requests. Production becomes smooth. Quality control improves. Stakeholders are happy.</p>
+                    <p>Demand is high, but your costs are rising due to inflation in “festive glitter” prices. You must set your price.</p>
+                </div>
+                <div class="choice-block">
+                    <h2>⭐ B1a(i)-1(a) – Next Decision: Pricing Strategy</h2>
+                    <ul class="option-list">
+                        <li>
+                            <strong>💷 CHOICE B1a(i)-1(a)-1 – Cost-Plus Pricing</strong>
+                            <p>Add a 40% markup to guarantee profit.</p>
+                        </li>
+                        <li>
+                            <strong>🎁 CHOICE B1a(i)-1(a)-2 – Psychological Pricing (£4.99 instead of £5.00)</strong>
+                            <p>Because students fall for it every time.</p>
+                        </li>
+                    </ul>
+                    <a href="#" class="choice-link" data-next="ending_b_1a_i_1_a_1">Cost-Plus</a>
+                    <a href="#" class="choice-link" data-next="ending_b_1a_i_1_a_2">Psychological</a>
+                </div>
+            </div>
+
+            <!-- PATH B1a(i)-2 (Instagram DM Chaos) -->
+            <div class="story-section" id="path_b_1a_i_2">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ B1a(i)-2 – Instagram DM Chaos</h1>
+                <div class="story-part">
+                    <p>Your DMs are full of: half messages, typos, people ordering hampers at 3:47am, and someone asking “do you accept Tesco Clubcard points?”.</p>
+                    <p>You lose 14 orders immediately. Your cash flow becomes impossible to track. You accidentally send the wrong hamper to a parent, and their confused nan receives one with a cat toy inside.</p>
+                </div>
+                <div class="choice-block">
+                    <h2>⭐ B1a(i)-2(a) – Crisis Response</h2>
+                    <ul class="option-list">
+                        <li>
+                            <strong>🔍 CHOICE B1a(i)-2(a)-1 – Hire a friend to manage admin (£5/hour)</strong>
+                            <p>This is called recruitment. And exploitation.</p>
+                        </li>
+                        <li>
+                            <strong>🧹 CHOICE B1a(i)-2(a)-2 – Close Instagram orders and switch to paper forms</strong>
+                            <p>Low-tech but reliable.</p>
+                        </li>
+                    </ul>
+                    <a href="#" class="choice-link" data-next="ending_b_1a_i_2_a_1">Hire Friend</a>
+                    <a href="#" class="choice-link" data-next="ending_b_1a_i_2_a_2">Paper Forms</a>
+                </div>
+            </div>
+
+            <!-- PATH B1b (Target Teachers) -->
+            <div class="story-section" id="path_b_1b">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ PATH B1b – Targeting Teachers</h1>
+                <div class="story-part">
+                    <p>Teachers LOVE the idea of custom gift hampers. Your packaging is elegant. Your pricing is premium. Your branding is classy (“Festive Flair Hampers™”). After your first day, you receive glowing reviews like: “This is better than John Lewis.”</p>
+                    <p>BUT… Your supplier suddenly runs out of the luxury Belgian chocolate that teachers specifically want. **Your supply chain has collapsed.**</p>
+                </div>
+                <div class="choice-block">
+                    <h2>⭐ B1b(i) – Supply Chain Decision</h2>
+                    <ul class="option-list">
+                        <li>
+                            <strong>🛒 CHOICE B1b(i)-1 – Switch to a Cheaper Supplier</strong>
+                            <p>✔ Lower purchase price, ✔ Higher profit margin, ✖ Teachers WILL notice, ✖ Risk to brand image.</p>
+                        </li>
+                        <li>
+                            <strong>💎 CHOICE B1b(i)-2 – Increase Price Due to Scarcity</strong>
+                            <p>✔ Premium branding, ✔ Scarcity marketing, ✔ Possibly boosts perceived value, ✖ Risk of reduced demand.</p>
+                        </li>
+                    </ul>
+                    <a href="#" class="choice-link" data-next="ending_b_1b_i_1_a">Cheaper Supplier</a>
+                    <a href="#" class="choice-link" data-next="ending_b_1b_i_2_a">Scarcity Pricing</a>
+                </div>
+            </div>
+            <!-- END: PATH B -->
+
+
+            <!-- ==================================================================== -->
+            <!-- START: PATH C (DOG WALKING) - Content remains the same -->
+            <!-- ==================================================================== -->
+            <div class="story-section" id="path_c_1">
+                <h1 class="main-title" style="font-size: 2em;">🐕‍🦺 PATH C – THE FESTIVE DOG-WALKING SERVICE</h1>
+                <p class="story-text">An entrepreneurial journey filled with ethics, customer service… and dogs in Santa hats.</p>
+                <div class="story-part">
+                    <h2>⭐ C1 – Launch Day</h2>
+                    <p>You start your festive dog-walking business. Every dog receives: a tiny Santa hat, a mini Christmas bandana, and a personalised treat bag labelled “BARKeting Department”.</p>
+                    <p>But one dog, a tiny but chaotic pug named Sir Wigglebottom McSniffington III, **escapes during a walk.** This is a major operational failure.</p>
+                </div>
+                <div class="choice-block">
+                    <h2>⭐⭐ CHOICE C1 – Crisis Response</h2>
+                    <ul class="option-list">
+                        <li>
+                            <strong>CHOICE C1a – Launch a Search Operation</strong>
+                            <ul><li>✔ Stakeholder satisfaction, ✔ Ethical behaviour, ✔ Higher costs (transport, time)</li></ul>
+                        </li>
+                        <li>
+                            <strong>CHOICE C1b – Pretend Nothing Happened</strong>
+                            <ul><li>✔ Saves time, ✔ Zero cost, ✖ INSANELY high risk, ✖ Terrible customer service</li></ul>
+                        </li>
+                    </ul>
+                    <a href="#" class="choice-link" data-next="path_c_1a">Search Operation</a>
+                    <a href="#" class="choice-link" data-next="path_c_1b">Ignore It</a>
+                </div>
+            </div>
+
+            <!-- PATH C1a (Search Operation) -->
+            <div class="story-section" id="path_c_1a">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ PATH C1a – The Search Operation</h1>
+                <div class="story-part">
+                    <p>You print posters, ask neighbours, and run an emergency promotional campaign titled: **“FIND THE PUG – FREE TREATS FOR ANY INFORMATION”** (Customer engagement = excellent).</p>
+                    <p>You find Sir Wigglebottom asleep inside a neighbour’s nativity display, curled up next to Baby Jesus. You now must decide your public relations strategy.</p>
+                </div>
+                <div class="choice-block">
+                    <h2>⭐ C1a(i) – PR Response</h2>
+                    <ul class="option-list">
+                        <li>
+                            <strong>📢 CHOICE C1a(i)-1 – Turn It Into a Hero Story</strong>
+                            <p>Post photos, create content, build brand loyalty, celebrate responsible behaviour.</p>
+                        </li>
+                        <li>
+                            <strong>📝 CHOICE C1a(i)-2 – Issue a Formal Apology</strong>
+                            <p>Shows professionalism. May reduce customer complaints.</p>
+                        </li>
+                    </ul>
+                    <a href="#" class="choice-link" data-next="ending_c_1a_i_1">Hero Story</a>
+                    <a href="#" class="choice-link" data-next="ending_c_1a_i_2">Formal Apology</a>
+                </div>
+            </div>
+
+            <!-- PATH C1b (Ignore It Strategy) -->
+            <div class="story-section" id="path_c_1b">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ PATH C1b – The “Ignore It” Strategy</h1>
+                <div class="story-part">
+                    <p>You decide to avoid responsibility. Bold choice. Terrible choice. Sir Wigglebottom DOES return home… wearing a random Santa hat and carrying a stolen sausage.</p>
+                    <p>The owner blames YOU. Your customer satisfaction plummets.</p>
+                </div>
+                <div class="choice-block">
+                    <h2>⭐ C1b(i) – Damage Control</h2>
+                    <ul class="option-list">
+                        <li>
+                            <strong>💸 CHOICE C1b(i)-1 – Offer a Refund</strong>
+                            <p>✔ Reduces complaints, ✖ Destroys your profit margin, ✖ Encourages more complaints (“free money???”).</p>
+                        </li>
+                        <li>
+                            <strong>🎄 CHOICE C1b(i)-2 – Offer a Loyalty Card</strong>
+                            <p>“Every 5 walks = 1 free.” ✔ Encourages repeat business, ✔ Builds loyalty, ✖ Reduces short-term profit.</p>
+                        </li>
+                    </ul>
+                    <a href="#" class="choice-link" data-next="ending_c_1b_i_1">Refund Ruin</a>
+                    <a href="#" class="choice-link" data-next="ending_c_1b_i_2">Loyalty Card</a>
+                </div>
+            </div>
+            <!-- END: PATH C -->
+
+
+            <!-- ==================================================================== -->
+            <!-- START: ALL ENDINGS - Content remains the same -->
+            <!-- ==================================================================== -->
+
+            <!-- ENDING A1a(i)-1: THE LOSS LEADER LEGEND -->
+            <div class="story-section" id="ending_a_1a_i_1">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ ENDING A1a(i)-1 – THE LOSS LEADER LEGEND</h1>
+                <div class="ending-box">
+                    <p>Your discount works — demand increases again. Although your profit margin shrinks dramatically, your revenue increases. You become locally famous: Someone even comments, **“This is better value than Starbucks.”** You don’t make much profit… But you do learn the meaning of loss leaders and customer loyalty.</p>
+                    <div class="concept-list">
+                        **GCSE Concepts Used:** penetration pricing, loss leaders, demand elasticity, customer loyalty, revenue vs profit.
+                    </div>
+                </div>
+                <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
+            </div>
+
+            <!-- ENDING A1a(i)-2: THE SUSTAINABILITY SCANDAL -->
+            <div class="story-section" id="ending_a_1a_i_2">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ ENDING A1a(i)-2 – THE SUSTAINABILITY SCANDAL</h1>
+                <div class="ending-box">
+                    <p>You panic and reply: **“They are… spiritually vegan.”** This triggers: A complaint from a parent, An email from the PTA, A safeguarding concern (???), Someone makes a TikTok calling you **“Marshmallow Walter White”**.</p>
+                    <p>Your business collapses due to: ethical failure, stakeholder pressure, and a breakdown in brand trust.</p>
+                    <div class="concept-list">
+                        **GCSE Concepts Used:** ethics, CSR, stakeholder conflict, reputation, legal implications, branding.
+                    </div>
+                </div>
+                <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
+            </div>
+            
+            <!-- ENDING A1b(i)-1: THE PREMIUM POWER MOVE -->
+            <div class="story-section" id="ending_a_1b_i_1">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ ENDING A1b(i)-1 – THE PREMIUM POWER MOVE</h1>
+                <div class="ending-box">
+                    <p>You raise your price by £1. Nobody complains. You achieve: ✔ Higher gross profit, ✔ Stronger premium brand positioning, ✔ Break-even earlier than expected, **✔ Total profit: £312**. You feel like a young Alan Sugar.</p>
+                    <div class="concept-list">
+                        **GCSE Concepts Used:** skimming, price elasticity of demand, break-even, profit margins.
+                    </div>
+                </div>
+                <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
+            </div>
+            
+            <!-- ENDING A1b(i)-2: THE BUNDLE OVERLOAD -->
+            <div class="story-section" id="ending_a_1b_i_2">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ ENDING A1b(i)-2 – THE BUNDLE OVERLOAD</h1>
+                <div class="ending-box">
+                    <p>Everyone buys the bundle… but only eats the FREE candy cane. Your variable costs rise. Your profit margin collapses.</p>
+                    <p>You end the day with: 61 untouched hot chocolates, 0 candy canes, and sadness. You reflect deeply on pricing strategy failure.</p>
+                    <div class="concept-list">
+                        **GCSE Concepts Used:** sales promotions, margin impact, revenue vs profit, misforecasting.
+                    </div>
+                </div>
+                <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
+            </div>
+
+            <!-- ENDING B1a(i)-1(a)-1: THE CALCULATED SUCCESS -->
+            <div class="story-section" id="ending_b_1a_i_1_a_1">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ ENDING B1a(i)-1(a)-1 – THE CALCULATED SUCCESS</h1>
+                <div class="ending-box">
+                    <p>Your cost-plus pricing ensures consistent gross profit. You hit your break-even point by Day 3. You reinvest profits into buying luxury chocolate and instantly improve your USP. Students call you **“the Jeff Bezos of Christmas.”**</p>
+                    <div class="concept-list">
+                        **GCSE Concepts Used:** cost-plus pricing, break-even, reinvestment, USP, cash flow.
+                    </div>
+                </div>
+                <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
+            </div>
+            
+            <!-- ENDING B1a(i)-1(a)-2: THE 4.99 TRIUMPH -->
+            <div class="story-section" id="ending_b_1a_i_1_a_2">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ ENDING B1a(i)-1(a)-2 – THE 4.99 TRIUMPH</h1>
+                <div class="ending-box">
+                    <p>Students LOVE the perceived bargain. Sales double. Your contribution per unit rises. **You make £176 profit in three days.** A Year 10 says: “£4.99 feels so cheap, I’ll buy two.” You whisper: “Perfect.”</p>
+                    <div class="concept-list">
+                        **GCSE Concepts Used:** psychological pricing, demand, consumer behaviour, profit maximisation.
+                    </div>
+                </div>
+                <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
+            </div>
+
+            <!-- ENDING B1a(i)-2(a)-1: THE BAD HIRE -->
+            <div class="story-section" id="ending_b_1a_i_2_a_1">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ ENDING B1a(i)-2(a)-1 – THE BAD HIRE</h1>
+                <div class="ending-box">
+                    <p>Your friend is extremely enthusiastic but deeply incompetent. They double-book orders, lose money, and accidentally create a hamper labelled: “To my favourite goat.”</p>
+                    <p>You learn the meaning of poor recruitment, low labour productivity, and catastrophic wage expenses. Business collapses.</p>
+                    <div class="concept-list">
+                        **GCSE Concepts Used:** recruitment, productivity, wage expenses, administrative failure.
+                    </div>
+                </div>
+                <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
+            </div>
+
+            <!-- ENDING B1a(i)-2(a)-2: THE PAPER FORM COMEBACK -->
+            <div class="story-section" id="ending_b_1a_i_2_a_2">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ ENDING B1a(i)-2(a)-2 – THE PAPER FORM COMEBACK</h1>
+                <div class="ending-box">
+                    <p>Paper forms reduce mistakes. Organisation improves. Demand stabilises. **You make £95 profit,** which you immediately spend on snacks. A perfectly acceptable outcome.</p>
+                    <div class="concept-list">
+                        **GCSE Concepts Used:** low-tech solutions, efficiency, profit stability.
+                    </div>
+                </div>
+                <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
+            </div>
+
+            <!-- ENDING B1b(i)-1(a): THE QUALITY CRISIS -->
+            <div class="story-section" id="ending_b_1b_i_1_a">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ Ending B1b(i)-1(a) – The Quality Crisis</h1>
+                <div class="ending-box">
+                    <p>You switch to low-cost chocolate. The complaints begin: **“I detected a lack of cocoa depth.”** Your quality assurance has failed. Your brand reputation plummets. You attempt a refund programme. It destroys your cash flow. **You end the week with –£43 profit** and a box of leftover sad chocolate.</p>
+                    <div class="concept-list">
+                        **GCSE Concepts Used:** quality assurance failure, brand damage, cash flow destruction, supply chain issues.
+                    </div>
+                </div>
+                <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
+            </div>
+
+            <!-- ENDING B1b(i)-2(a): THE LUXURY SCARCITY STRATEGY -->
+            <div class="story-section" id="ending_b_1b_i_2_a">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ Ending B1b(i)-2(a) – The Luxury Scarcity Strategy</h1>
+                <div class="ending-box">
+                    <p>You raise prices by 20% and rebrand your hampers as: ✨ “LIMITED EDITION LUXURY BELGIAN HAMPERS (Only 6 Available)” ✨. Teachers love this. Scarcity triggers demand. Your hampers sell out instantly. **You finish the week with £180 profit.** You whisper: **“Adam Smith would be proud.”**</p>
+                    <div class="concept-list">
+                        **GCSE Concepts Used:** scarcity marketing, premium pricing, revenue increase, profit maximisation.
+                    </div>
+                </div>
+                <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
+            </div>
+
+            <!-- ENDING C1a(i)-1: THE SOCIAL MEDIA HERO -->
+            <div class="story-section" id="ending_c_1a_i_1">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ ENDING C1a(i)-1 – THE SOCIAL MEDIA HERO</h1>
+                <div class="ending-box">
+                    <p>Your post goes viral. Caption: **“We found Sir Wigglebottom living his best life in the nativity scene 🐕✨🎄”**. Dog owners LOVE you. Demand doubles. Other businesses invite you to collaborate. **You make £210 profit** and receive three dog Christmas cards.</p>
+                    <div class="concept-list">
+                        **GCSE Concepts Used:** positive PR, social media promotion, brand loyalty, collaboration.
+                    </div>
+                </div>
+                <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
+            </div>
+
+            <!-- ENDING C1a(i)-2: THE PROFESSIONAL MANAGER -->
+            <div class="story-section" id="ending_c_1a_i_2">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ ENDING C1a(i)-2 – THE PROFESSIONAL MANAGER</h1>
+                <div class="ending-box">
+                    <p>Your apology is so well written that someone asks if you're studying English Lit instead of Business. Customers trust you more. Your reputation becomes **“responsible and reliable,”** a key factor in brand loyalty. **You earn £125 profit** and experience minimal stress.</p>
+                    <div class="concept-list">
+                        **GCSE Concepts Used:** professionalism, reputation building, customer trust, brand loyalty.
+                    </div>
+                </div>
+                <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
+            </div>
+
+            <!-- ENDING C1b(i)-1: THE REFUND RUIN -->
+            <div class="story-section" id="ending_c_1b_i_1">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ ENDING C1b(i)-1 – THE REFUND RUIN</h1>
+                <div class="ending-box">
+                    <p>You refund the owner. Then two more people claim their dogs were “emotionally distressed.” You refund them too. **Your profit collapses to £0.** Sir Wigglebottom now barks every time he sees you.</p>
+                    <div class="concept-list">
+                        **GCSE Concepts Used:** refund policy, financial loss, negative customer behaviour, brand deterioration.
+                    </div>
+                </div>
+                <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
+            </div>
+
+            <!-- ENDING C1b(i)-2: THE ACCIDENTAL SUCCESS -->
+            <div class="story-section" id="ending_c_1b_i_2">
+                <h1 class="main-title" style="font-size: 2em;">⭐⭐⭐ ENDING C1b(i)-2 – THE ACCIDENTAL SUCCESS</h1>
+                <div class="ending-box">
+                    <p>Owners LOVE loyalty schemes. Suddenly everyone wants you to walk their dogs. Your customer base grows. **Your profit rises to £95.** You celebrate by buying more Santa hats for dogs. A happy ending.</p>
+                    <div class="concept-list">
+                        **GCSE Concepts Used:** loyalty schemes, repeat business, customer base growth.
+                    </div>
+                </div>
+                <a href="#" class="choice-link" data-next="intro">Restart The Christmas Business Chaos</a>
+            </div>
+            <!-- END: ALL ENDINGS -->
+
 
         </div>
-    <script src="script.js"></script>
+    </div>
+    
+    <!-- JavaScript Logic -->
+    <script>
+        // Function to control which section is displayed
+        function showStoryPart(partId) {
+            // Get all story sections
+            const sections = document.querySelectorAll('.story-section');
+            
+            // Hide all sections
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Show the specific section requested by ID
+            const targetSection = document.getElementById(partId);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+                // Scroll to the top of the container for better user experience
+                document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Attach event listeners to all choice links
+        document.addEventListener('DOMContentLoaded', () => {
+            // Start by showing the INTRO section
+            showStoryPart('intro');
+
+            // Select all links with the class 'choice-link'
+            const choiceLinks = document.querySelectorAll('.choice-link');
+
+            choiceLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    // Prevent the default link behaviour (which would try to navigate to a new page)
+                    event.preventDefault();
+                    
+                    // Get the ID of the next story part from the 'data-next' attribute
+                    const nextPartId = this.getAttribute('data-next');
+                    
+                    // Call the function to show the next part
+                    showStoryPart(nextPartId);
+                });
+            });
+        });
+    </script>
 </body>
 </html>
