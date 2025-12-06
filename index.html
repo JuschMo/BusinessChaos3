@@ -32,6 +32,7 @@
         }
 
         /* FIX: Set HTML and Body to ensure full height and scrollability */
+        /* This is the key fix that allows the whole document to scroll if content exceeds viewport */
         html {
             height: 100%;
         }
@@ -92,7 +93,7 @@
             width: 90%;
             border-radius: 20px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-            /* FIX: Removed 'overflow: hidden' which was preventing content from scrolling */
+            /* This property was previously 'overflow: hidden' which was causing problems */
             border: 6px solid var(--color-deep-red);
             margin-bottom: 50px;
             background-color: var(--color-light-snow);
@@ -835,7 +836,6 @@ function showStoryPart(partId) {
         targetSection.style.display = 'block';
         
         // When a new part is shown, scroll the *window* to the top of the container
-        // to ensure the user sees the content immediately, especially after clicking a button far down the screen.
         document.querySelector('.card-wrapper').scrollIntoView({ behavior: 'smooth' });
     }
 }
@@ -856,4 +856,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Get the ID of the next story part from the 'data-next' attribute
             const nextPartId = this.getAttribute('data-next');
             
-            // Call the function to
+            // Call the function to show the next part
+            showStoryPart(nextPartId);
+        });
+    });
+});
+    </script>
+</body>
+</html>
