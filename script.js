@@ -1,5 +1,3 @@
-// script.js
-
 // Function to control which section is displayed
 function showStoryPart(partId) {
     // Get all story sections
